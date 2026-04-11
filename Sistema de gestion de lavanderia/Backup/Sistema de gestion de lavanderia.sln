@@ -1,0 +1,25 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Presentation", "Presentation", "{7E96DA71-4FE4-4D8C-9880-9F11D5B51086}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Business", "Business", "{D2C672BC-6943-497C-BBC0-36BE566A6AF0}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Data", "Data", "{6C30833B-25B0-41A1-9FA9-DA7655833FDF}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SGL.API", "SGL.API\SGL.API.csproj", "{C6E1EF35-2E45-4B96-A33B-2CB73B0EDE53}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(NestedProjects) = preSolution
+		{C6E1EF35-2E45-4B96-A33B-2CB73B0EDE53} = {7E96DA71-4FE4-4D8C-9880-9F11D5B51086}
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{C6E1EF35-2E45-4B96-A33B-2CB73B0EDE53}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{C6E1EF35-2E45-4B96-A33B-2CB73B0EDE53}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{C6E1EF35-2E45-4B96-A33B-2CB73B0EDE53}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{C6E1EF35-2E45-4B96-A33B-2CB73B0EDE53}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+EndGlobal
