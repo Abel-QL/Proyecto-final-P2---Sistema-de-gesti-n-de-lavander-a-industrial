@@ -1,0 +1,11 @@
+{
+  "version": 2,
+  "dgSpecHash": "29ZipEbCIK0=",
+  "success": true,
+  "projectFilePath": "C:\\Users\\abelq\\OneDrive\\Documentos\\GitHub\\Proyecto-final-P2---Sistema-de-gesti-n-de-lavander-a-industrial\\Sistema de gestion de lavanderia\\SGL.API\\SGL.API.csproj",
+  "expectedPackageFiles": [
+    "C:\\Users\\abelq\\.nuget\\packages\\microsoft.aspnetcore.openapi\\10.0.4\\microsoft.aspnetcore.openapi.10.0.4.nupkg.sha512",
+    "C:\\Users\\abelq\\.nuget\\packages\\microsoft.openapi\\2.0.0\\microsoft.openapi.2.0.0.nupkg.sha512"
+  ],
+  "logs": []
+}
