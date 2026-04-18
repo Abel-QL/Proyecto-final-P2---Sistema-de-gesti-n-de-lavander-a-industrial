@@ -14,7 +14,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyCompanyAttribute("SGL.API")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Debug")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+1b7fb35a505841c915ddf6d0335d2a185ac19dc5")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+06cb20a1aae168e94f426f4fb6c41923202e8702")]
 [assembly: System.Reflection.AssemblyProductAttribute("SGL.API")]
 [assembly: System.Reflection.AssemblyTitleAttribute("SGL.API")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]
