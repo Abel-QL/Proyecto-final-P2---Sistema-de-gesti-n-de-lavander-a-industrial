@@ -9,4 +9,7 @@ public class Factura{
     public decimal Impuestos {get; set;}
     public decimal Total {get; set;}
     public string EstadoPago {get; set;} = "Pendiente";
+    
+    public virtual Cliente Cliente { get; set; } = null!;
+    public virtual Lote Lote { get; set; } = null!;
 }
