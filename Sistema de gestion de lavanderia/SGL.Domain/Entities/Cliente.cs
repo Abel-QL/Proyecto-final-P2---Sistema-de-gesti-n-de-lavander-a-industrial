@@ -15,4 +15,8 @@ public class Cliente
     public bool Estado { get; set; } = true;
     public DateTime FechaRegistro { get; set; } = DateTime.UtcNow;
     public decimal LimiteCredito { get; set; } = 0;
+    
+    public virtual ICollection<Lote> Lotes { get; set; } = new List<Lote>();
+    public virtual ICollection<Factura> Facturas { get; set; }  = new List<Factura>();
+
 }

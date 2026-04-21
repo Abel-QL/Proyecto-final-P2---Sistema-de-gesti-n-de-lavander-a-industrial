@@ -8,4 +8,7 @@ public class HistorialEstadoLote{
     public DateTime TiempoTransicion { get; set; }
     public int OperadorId { get; set; }
     public string? Observaciones { get; set; } = string.Empty;
+    
+    public virtual Lote Lote { get; set; } = null!;
+    public virtual Empleado Empleado { get; set; } = null!;
 }

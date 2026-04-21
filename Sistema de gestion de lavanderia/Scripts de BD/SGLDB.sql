@@ -35,6 +35,7 @@ CREATE TABLE EMPLEADO (
     NombreCompleto nvarchar(100) NOT NULL,
     Rol nvarchar(50) NOT NULL, 
     Email nvarchar(100),
+    Contrasena nvarchar(max),
     Estado bit DEFAULT 1
 );
 GO
