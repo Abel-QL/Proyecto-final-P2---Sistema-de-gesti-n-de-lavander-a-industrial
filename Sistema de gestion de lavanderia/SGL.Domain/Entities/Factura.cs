@@ -1,7 +1,9 @@
-﻿namespace SGL.Domain.Entities;
+﻿using SGL.Domain.Core;
 
-public class Factura{
-    public int Id {get; set;}
+namespace SGL.Domain.Entities;
+
+public class Factura : BaseEntity {
+   // public int Id {get; set;}
     public int ClienteId {get; set;}
     public int LoteId {get; set;}
     public DateTime FechaEmision {get; set;} = DateTime.UtcNow;

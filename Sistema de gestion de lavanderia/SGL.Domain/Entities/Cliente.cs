@@ -1,8 +1,10 @@
-﻿namespace SGL.Domain.Entities;
+﻿using SGL.Domain.Core;
 
-public class Cliente
+namespace SGL.Domain.Entities;
+
+public class Cliente : BaseEntity
 {
-    public int Id { get; set; }
+   // public int Id { get; set; }
     public string NombreCompania { get; set; } = string.Empty;
     public string? Rnc { get; set; }
     public string? DireccionRecoleccion { get; set; }
@@ -12,7 +14,7 @@ public class Cliente
     public string? TelefonoContacto { get; set; }
     public string? EmailContacto { get; set; }
 
-    public bool Estado { get; set; } = true;
+    //public bool Estado { get; set; } = true;
     public DateTime FechaRegistro { get; set; } = DateTime.UtcNow;
     public decimal LimiteCredito { get; set; } = 0;
     
