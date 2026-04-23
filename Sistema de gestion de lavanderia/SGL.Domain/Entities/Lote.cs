@@ -1,7 +1,9 @@
-﻿namespace SGL.Domain.Entities;
+﻿using SGL.Domain.Core;
 
-public class Lote{
-public int Id { get; set; }
+namespace SGL.Domain.Entities;
+
+public class Lote : BaseEntity{
+//public int Id { get; set; }
 public int ClienteId { get; set; }
 public decimal PesoTotal { get; set; }
 public int? CantidadArticulos { get; set; }

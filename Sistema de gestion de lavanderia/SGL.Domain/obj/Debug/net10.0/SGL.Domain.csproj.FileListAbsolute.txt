@@ -1,0 +1,15 @@
+C:\Users\abelq\OneDrive\Documentos\GitHub\Proyecto-final-P2---Sistema-de-gesti-n-de-lavander-a-industrial\Sistema de gestion de lavanderia\SGL.Domain\bin\Debug\net10.0\SGL.Domain.deps.json
+C:\Users\abelq\OneDrive\Documentos\GitHub\Proyecto-final-P2---Sistema-de-gesti-n-de-lavander-a-industrial\Sistema de gestion de lavanderia\SGL.Domain\bin\Debug\net10.0\SGL.Domain.runtimeconfig.json
+C:\Users\abelq\OneDrive\Documentos\GitHub\Proyecto-final-P2---Sistema-de-gesti-n-de-lavander-a-industrial\Sistema de gestion de lavanderia\SGL.Domain\bin\Debug\net10.0\SGL.Domain.dll
+C:\Users\abelq\OneDrive\Documentos\GitHub\Proyecto-final-P2---Sistema-de-gesti-n-de-lavander-a-industrial\Sistema de gestion de lavanderia\SGL.Domain\bin\Debug\net10.0\SGL.Domain.pdb
+C:\Users\abelq\OneDrive\Documentos\GitHub\Proyecto-final-P2---Sistema-de-gesti-n-de-lavander-a-industrial\Sistema de gestion de lavanderia\SGL.Domain\obj\Debug\net10.0\SGL.Domain.csproj.AssemblyReference.cache
+C:\Users\abelq\OneDrive\Documentos\GitHub\Proyecto-final-P2---Sistema-de-gesti-n-de-lavander-a-industrial\Sistema de gestion de lavanderia\SGL.Domain\obj\Debug\net10.0\SGL.Domain.GeneratedMSBuildEditorConfig.editorconfig
+C:\Users\abelq\OneDrive\Documentos\GitHub\Proyecto-final-P2---Sistema-de-gesti-n-de-lavander-a-industrial\Sistema de gestion de lavanderia\SGL.Domain\obj\Debug\net10.0\SGL.Domain.AssemblyInfoInputs.cache
+C:\Users\abelq\OneDrive\Documentos\GitHub\Proyecto-final-P2---Sistema-de-gesti-n-de-lavander-a-industrial\Sistema de gestion de lavanderia\SGL.Domain\obj\Debug\net10.0\SGL.Domain.AssemblyInfo.cs
+C:\Users\abelq\OneDrive\Documentos\GitHub\Proyecto-final-P2---Sistema-de-gesti-n-de-lavander-a-industrial\Sistema de gestion de lavanderia\SGL.Domain\obj\Debug\net10.0\SGL.Domain.csproj.CoreCompileInputs.cache
+C:\Users\abelq\OneDrive\Documentos\GitHub\Proyecto-final-P2---Sistema-de-gesti-n-de-lavander-a-industrial\Sistema de gestion de lavanderia\SGL.Domain\obj\Debug\net10.0\SGL.Domain.sourcelink.json
+C:\Users\abelq\OneDrive\Documentos\GitHub\Proyecto-final-P2---Sistema-de-gesti-n-de-lavander-a-industrial\Sistema de gestion de lavanderia\SGL.Domain\obj\Debug\net10.0\SGL.Domain.dll
+C:\Users\abelq\OneDrive\Documentos\GitHub\Proyecto-final-P2---Sistema-de-gesti-n-de-lavander-a-industrial\Sistema de gestion de lavanderia\SGL.Domain\obj\Debug\net10.0\refint\SGL.Domain.dll
+C:\Users\abelq\OneDrive\Documentos\GitHub\Proyecto-final-P2---Sistema-de-gesti-n-de-lavander-a-industrial\Sistema de gestion de lavanderia\SGL.Domain\obj\Debug\net10.0\SGL.Domain.pdb
+C:\Users\abelq\OneDrive\Documentos\GitHub\Proyecto-final-P2---Sistema-de-gesti-n-de-lavander-a-industrial\Sistema de gestion de lavanderia\SGL.Domain\obj\Debug\net10.0\SGL.Domain.genruntimeconfig.cache
+C:\Users\abelq\OneDrive\Documentos\GitHub\Proyecto-final-P2---Sistema-de-gesti-n-de-lavander-a-industrial\Sistema de gestion de lavanderia\SGL.Domain\obj\Debug\net10.0\ref\SGL.Domain.dll

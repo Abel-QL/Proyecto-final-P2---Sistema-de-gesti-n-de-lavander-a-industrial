@@ -1,7 +1,9 @@
-﻿namespace SGL.Domain.Entities;
+﻿using SGL.Domain.Core;
 
-public class Entrega{
-    public int Id {get; set;}
+namespace SGL.Domain.Entities;
+
+public class Entrega : BaseEntity{
+   // public int Id {get; set;}
     public int LoteId  {get; set;}
     public int ConductorId {get; set;}
     public string? VehiculoPlaca  {get; set;}
