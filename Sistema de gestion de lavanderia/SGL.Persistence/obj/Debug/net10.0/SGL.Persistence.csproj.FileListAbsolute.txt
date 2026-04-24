@@ -1,0 +1,15 @@
+C:\Users\abelq\OneDrive\Documentos\GitHub\Proyecto-final-P2---Sistema-de-gesti-n-de-lavander-a-industrial\Sistema de gestion de lavanderia\SGL.Persistence\bin\Debug\net10.0\SGL.Persistence.deps.json
+C:\Users\abelq\OneDrive\Documentos\GitHub\Proyecto-final-P2---Sistema-de-gesti-n-de-lavander-a-industrial\Sistema de gestion de lavanderia\SGL.Persistence\bin\Debug\net10.0\SGL.Persistence.runtimeconfig.json
+C:\Users\abelq\OneDrive\Documentos\GitHub\Proyecto-final-P2---Sistema-de-gesti-n-de-lavander-a-industrial\Sistema de gestion de lavanderia\SGL.Persistence\bin\Debug\net10.0\SGL.Persistence.dll
+C:\Users\abelq\OneDrive\Documentos\GitHub\Proyecto-final-P2---Sistema-de-gesti-n-de-lavander-a-industrial\Sistema de gestion de lavanderia\SGL.Persistence\bin\Debug\net10.0\SGL.Persistence.pdb
+C:\Users\abelq\OneDrive\Documentos\GitHub\Proyecto-final-P2---Sistema-de-gesti-n-de-lavander-a-industrial\Sistema de gestion de lavanderia\SGL.Persistence\obj\Debug\net10.0\SGL.Persistence.csproj.AssemblyReference.cache
+C:\Users\abelq\OneDrive\Documentos\GitHub\Proyecto-final-P2---Sistema-de-gesti-n-de-lavander-a-industrial\Sistema de gestion de lavanderia\SGL.Persistence\obj\Debug\net10.0\SGL.Persistence.GeneratedMSBuildEditorConfig.editorconfig
+C:\Users\abelq\OneDrive\Documentos\GitHub\Proyecto-final-P2---Sistema-de-gesti-n-de-lavander-a-industrial\Sistema de gestion de lavanderia\SGL.Persistence\obj\Debug\net10.0\SGL.Persistence.AssemblyInfoInputs.cache
+C:\Users\abelq\OneDrive\Documentos\GitHub\Proyecto-final-P2---Sistema-de-gesti-n-de-lavander-a-industrial\Sistema de gestion de lavanderia\SGL.Persistence\obj\Debug\net10.0\SGL.Persistence.AssemblyInfo.cs
+C:\Users\abelq\OneDrive\Documentos\GitHub\Proyecto-final-P2---Sistema-de-gesti-n-de-lavander-a-industrial\Sistema de gestion de lavanderia\SGL.Persistence\obj\Debug\net10.0\SGL.Persistence.csproj.CoreCompileInputs.cache
+C:\Users\abelq\OneDrive\Documentos\GitHub\Proyecto-final-P2---Sistema-de-gesti-n-de-lavander-a-industrial\Sistema de gestion de lavanderia\SGL.Persistence\obj\Debug\net10.0\SGL.Persistence.sourcelink.json
+C:\Users\abelq\OneDrive\Documentos\GitHub\Proyecto-final-P2---Sistema-de-gesti-n-de-lavander-a-industrial\Sistema de gestion de lavanderia\SGL.Persistence\obj\Debug\net10.0\SGL.Persistence.dll
+C:\Users\abelq\OneDrive\Documentos\GitHub\Proyecto-final-P2---Sistema-de-gesti-n-de-lavander-a-industrial\Sistema de gestion de lavanderia\SGL.Persistence\obj\Debug\net10.0\refint\SGL.Persistence.dll
+C:\Users\abelq\OneDrive\Documentos\GitHub\Proyecto-final-P2---Sistema-de-gesti-n-de-lavander-a-industrial\Sistema de gestion de lavanderia\SGL.Persistence\obj\Debug\net10.0\SGL.Persistence.pdb
+C:\Users\abelq\OneDrive\Documentos\GitHub\Proyecto-final-P2---Sistema-de-gesti-n-de-lavander-a-industrial\Sistema de gestion de lavanderia\SGL.Persistence\obj\Debug\net10.0\SGL.Persistence.genruntimeconfig.cache
+C:\Users\abelq\OneDrive\Documentos\GitHub\Proyecto-final-P2---Sistema-de-gesti-n-de-lavander-a-industrial\Sistema de gestion de lavanderia\SGL.Persistence\obj\Debug\net10.0\ref\SGL.Persistence.dll
