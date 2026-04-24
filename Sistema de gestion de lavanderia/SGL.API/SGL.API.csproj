@@ -20,6 +20,7 @@
     </ItemGroup>
 
     <ItemGroup>
+      <ProjectReference Include="..\SGL.Aplication\SGL.Aplication.csproj" />
       <ProjectReference Include="..\SGL.Domain\SGL.Domain.csproj" />
       <ProjectReference Include="..\SGL.Infrastructure\SGL.Infrastructure.csproj" />
     </ItemGroup>
