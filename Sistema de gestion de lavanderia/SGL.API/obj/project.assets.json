@@ -1004,6 +1004,26 @@
           "buildTransitive/net8.0/_._": {}
         }
       },
+      "SGL.Aplication/1.0.0": {
+        "type": "project",
+        "framework": ".NETCoreApp,Version=v10.0",
+        "dependencies": {
+          "AutoMapper": "14.0.0",
+          "Microsoft.EntityFrameworkCore": "10.0.6",
+          "Microsoft.EntityFrameworkCore.SqlServer": "10.0.6",
+          "SGL.Domain": "1.0.0",
+          "SGL.Infrastructure": "1.0.0",
+          "SGL.Persistence": "1.0.0",
+          "Swashbuckle.AspNetCore.SwaggerGen": "10.1.7",
+          "Swashbuckle.AspNetCore.SwaggerUI": "10.1.7"
+        },
+        "compile": {
+          "bin/placeholder/SGL.Aplication.dll": {}
+        },
+        "runtime": {
+          "bin/placeholder/SGL.Aplication.dll": {}
+        }
+      },
       "SGL.Domain/1.0.0": {
         "type": "project",
         "framework": ".NETCoreApp,Version=v10.0",
@@ -1037,6 +1057,23 @@
         },
         "runtime": {
           "bin/placeholder/SGL.Infrastructure.dll": {}
+        }
+      },
+      "SGL.Persistence/1.0.0": {
+        "type": "project",
+        "framework": ".NETCoreApp,Version=v10.0",
+        "dependencies": {
+          "AutoMapper": "14.0.0",
+          "Microsoft.EntityFrameworkCore": "10.0.6",
+          "Microsoft.EntityFrameworkCore.SqlServer": "10.0.6",
+          "Swashbuckle.AspNetCore.SwaggerGen": "10.1.7",
+          "Swashbuckle.AspNetCore.SwaggerUI": "10.1.7"
+        },
+        "compile": {
+          "bin/placeholder/SGL.Persistence.dll": {}
+        },
+        "runtime": {
+          "bin/placeholder/SGL.Persistence.dll": {}
         }
       }
     }
@@ -2462,6 +2499,11 @@
         "useSharedDesignerContext.txt"
       ]
     },
+    "SGL.Aplication/1.0.0": {
+      "type": "project",
+      "path": "../SGL.Aplication/SGL.Aplication.csproj",
+      "msbuildProject": "../SGL.Aplication/SGL.Aplication.csproj"
+    },
     "SGL.Domain/1.0.0": {
       "type": "project",
       "path": "../SGL.Domain/SGL.Domain.csproj",
@@ -2471,6 +2513,11 @@
       "type": "project",
       "path": "../SGL.Infrastructure/SGL.Infrastructure.csproj",
       "msbuildProject": "../SGL.Infrastructure/SGL.Infrastructure.csproj"
+    },
+    "SGL.Persistence/1.0.0": {
+      "type": "project",
+      "path": "../SGL.Persistence/SGL.Persistence.csproj",
+      "msbuildProject": "../SGL.Persistence/SGL.Persistence.csproj"
     }
   },
   "projectFileDependencyGroups": {
@@ -2480,6 +2527,7 @@
       "Microsoft.EntityFrameworkCore >= 10.0.6",
       "Microsoft.EntityFrameworkCore.SqlServer >= 10.0.6",
       "Microsoft.EntityFrameworkCore.Tools >= 10.0.6",
+      "SGL.Aplication >= 1.0.0",
       "SGL.Domain >= 1.0.0",
       "SGL.Infrastructure >= 1.0.0",
       "Swashbuckle.AspNetCore.SwaggerGen >= 10.1.7",
@@ -2518,6 +2566,9 @@
         "net10.0": {
           "targetAlias": "net10.0",
           "projectReferences": {
+            "C:\\Users\\abelq\\OneDrive\\Documentos\\GitHub\\Proyecto-final-P2---Sistema-de-gesti-n-de-lavander-a-industrial\\Sistema de gestion de lavanderia\\SGL.Aplication\\SGL.Aplication.csproj": {
+              "projectPath": "C:\\Users\\abelq\\OneDrive\\Documentos\\GitHub\\Proyecto-final-P2---Sistema-de-gesti-n-de-lavander-a-industrial\\Sistema de gestion de lavanderia\\SGL.Aplication\\SGL.Aplication.csproj"
+            },
             "C:\\Users\\abelq\\OneDrive\\Documentos\\GitHub\\Proyecto-final-P2---Sistema-de-gesti-n-de-lavander-a-industrial\\Sistema de gestion de lavanderia\\SGL.Domain\\SGL.Domain.csproj": {
               "projectPath": "C:\\Users\\abelq\\OneDrive\\Documentos\\GitHub\\Proyecto-final-P2---Sistema-de-gesti-n-de-lavander-a-industrial\\Sistema de gestion de lavanderia\\SGL.Domain\\SGL.Domain.csproj"
             },

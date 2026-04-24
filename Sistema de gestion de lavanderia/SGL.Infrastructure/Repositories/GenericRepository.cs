@@ -22,13 +22,13 @@ public class GenericRepository<T> : IGenericRepository<T> where T : BaseEntity{
 
     public async Task<T> Create(T entity){
         await _dbSet.AddAsync(entity);
-        await _context.SaveChangesAsync();
+     //   await _context.SaveChangesAsync();
         return entity;
     }
 
     public async Task<T> Update(T entity){
         _dbSet.Update(entity);
-        await _context.SaveChangesAsync();
+        //await _context.SaveChangesAsync();
         return entity;
     }
 
@@ -37,7 +37,7 @@ public class GenericRepository<T> : IGenericRepository<T> where T : BaseEntity{
         if(entity == null) return false;
 
         _dbSet.Remove(entity);
-        await _context.SaveChangesAsync();
+       // await _context.SaveChangesAsync();
         return true;
     }
 
@@ -45,7 +45,7 @@ public class GenericRepository<T> : IGenericRepository<T> where T : BaseEntity{
         var entity = await _dbSet.FindAsync(id);
         if(entity == null) return false;
         entity.Activo = false;
-        await _context.SaveChangesAsync();
+       // await _context.SaveChangesAsync();
         return true;
     }
 }

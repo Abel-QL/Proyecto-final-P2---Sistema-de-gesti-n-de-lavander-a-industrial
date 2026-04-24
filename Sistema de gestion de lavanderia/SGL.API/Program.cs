@@ -1,6 +1,7 @@
 using Microsoft.EntityFrameworkCore;
 using SGL.Infrastructure.Data;
 using SGL.Infrastructure.Repositories;
+using SGL.Aplication.Extensions;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -23,6 +24,8 @@ if (app.Environment.IsDevelopment())
     app.UseSwagger();
     app.UseSwaggerUI();
 }
+
+builder.Services.AddApplicationServices();
 
 app.UseHttpsRedirection();
 app.UseAuthorization();
