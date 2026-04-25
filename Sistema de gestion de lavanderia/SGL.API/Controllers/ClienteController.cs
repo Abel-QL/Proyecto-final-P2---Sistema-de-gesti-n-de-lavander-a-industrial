@@ -72,6 +72,20 @@ public class ClienteController : ControllerBase
             return StatusCode(500, new { mensaje = "Error al actualizar cliente", detalle = ex.Message });
         }
     }
+    
+    [HttpGet("limite/{limiteMinimo}")]
+    public async Task<IActionResult> GetPorLimiteCredito(decimal limiteMinimo)
+    {
+        try
+        {
+            var result = await _service.GetAllAsync(limiteMinimo);
+            return Ok(result);
+        }
+        catch (Exception ex)
+        {
+            return StatusCode(500, new { mensaje = "Error al obtener clientes", detalle = ex.Message });
+        }
+    }
 
     [HttpDelete("{id}")]
     public async Task<IActionResult> Delete(int id)

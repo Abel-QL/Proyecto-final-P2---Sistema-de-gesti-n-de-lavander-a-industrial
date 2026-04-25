@@ -3,7 +3,7 @@
 public class LoteResponseDto{
     public int Id { get; set; }
     public int ClienteId { get; set; }
-    public string NombreCliente { get; set; } = string.Empty; // dato útil del cliente
+    public string NombreCliente { get; set; } = string.Empty; 
     public decimal PesoTotal { get; set; }
     public int? CantidadArticulos { get; set; }
     public DateTime FechaRecepcion { get; set; }

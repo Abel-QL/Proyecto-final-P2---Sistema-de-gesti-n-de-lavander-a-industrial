@@ -6,4 +6,5 @@ public class LoteCreateDto{
     public int? CantidadArticulos { get; set; }
     public DateTime? FechaEntregaEsperada { get; set; }
     public List<int> ServicioIds { get; set; } = new();
+    public int OperadorId { get; set; } 
 }

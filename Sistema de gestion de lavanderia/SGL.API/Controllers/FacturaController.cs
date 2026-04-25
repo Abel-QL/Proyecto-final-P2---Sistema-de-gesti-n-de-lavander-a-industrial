@@ -85,6 +85,19 @@ public class FacturaController : ControllerBase
             return StatusCode(500, new { mensaje = "Error al crear factura", detalle = ex.Message });
         }
     }
+    [HttpPost("con-itbis")]
+    public async Task<IActionResult> CreateConItbis([FromBody] FacturaCreateDto dto)
+    {
+        try
+        {
+            var result = await _service.CreateAsync(dto, aplicarItbis: true);
+            return CreatedAtAction(nameof(GetById), new { id = result.Id }, result);
+        }
+        catch (Exception ex)
+        {
+            return StatusCode(500, new { mensaje = "Error al crear factura", detalle = ex.Message });
+        }
+    }
 
     [HttpPatch("{id}/estado")]
     public async Task<IActionResult> UpdateEstado(int id, [FromBody] FacturaUpdateDto dto)

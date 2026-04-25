@@ -8,4 +8,5 @@ public interface IClienteService{
     Task<ClienteResponseDto> CreateAsync(ClienteCreateDto dto);
     Task<ClienteResponseDto?> UpdateAsync(int id, ClienteUpdateDto dto);
     Task<bool> DeleteAsync(int id);
+    Task<List<ClienteResponseDto>> GetAllAsync(decimal limiteMinimo);
 }
