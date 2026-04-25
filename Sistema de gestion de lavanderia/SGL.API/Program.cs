@@ -6,11 +6,21 @@ using SGL.Aplication.Extensions;
 
 var builder = WebApplication.CreateBuilder(args);
 
-builder.Services.AddDbContext<SglDbContext>(options => options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
+builder.Services.AddDbContext<SglDbContext>(options => 
+options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
+
+builder.Services.AddCors(options =>
+{
+    options.AddPolicy("AllowAll", policy =>
+    {
+        policy.AllowAnyOrigin()   
+       .AllowAnyMethod()   
+       .AllowAnyHeader();  
+    });
+});
 
 builder.Services.AddScoped<UnitOfWork>();
 builder.Services.AddAutoMapper(cfg => {}, typeof(MappingProfile));
-
 builder.Services.AddApplicationServices();
 
 builder.Services.AddControllers();
@@ -24,7 +34,12 @@ if(app.Environment.IsDevelopment()) {
     app.UseSwaggerUI();
 }
 
-app.UseHttpsRedirection();
+app.UseStaticFiles(); 
+//app.UseHttpsRedirection();
+app.UseCors(options => options.AllowAnyOrigin().AllowAnyMethod().AllowAnyHeader());
+
+app.UseCors("AllowAll");
+
 app.UseAuthorization();
 app.MapControllers();
 app.Run();

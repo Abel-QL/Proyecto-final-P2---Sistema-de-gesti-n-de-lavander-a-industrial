@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using SGL.Infrastructure.Data;
 
@@ -11,9 +12,11 @@ using SGL.Infrastructure.Data;
 namespace SGL.Infrastructure.Migrations
 {
     [DbContext(typeof(SglDbContext))]
-    partial class SglDbContextModelSnapshot : ModelSnapshot
+    [Migration("20260425035209_InitialCreateLimpio")]
+    partial class InitialCreateLimpio
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder

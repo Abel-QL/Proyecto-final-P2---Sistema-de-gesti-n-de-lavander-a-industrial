@@ -38,11 +38,15 @@ public class LoteService : ILoteService{
 
     public async Task<LoteResponseDto> CreateAsync(LoteCreateDto dto){
         var lote = _mapper.Map<Lote>(dto);
-        await _uow.Lotes.Create(lote);
 
-        var historial = new HistorialEstadoLote {
-            LoteId = lote.Id, EstadoAnterior = null, NuevoEstado = "RECEPCIONADO", TiempoTransicion = DateTime.UtcNow, OperadorId = 1 // reemplazar con usuario autenticado
-        };
+        lote.FechaRecepcion = DateTime.UtcNow;
+        lote.EstadoActual = "RECEPCIONADO";
+
+        await _uow.Lotes.Create(lote);
+        await _uow.CompleteAsync();
+
+        var historial = new HistorialEstadoLote {LoteId = lote.Id, EstadoAnterior = null, NuevoEstado = "RECEPCIONADO", TiempoTransicion = DateTime.UtcNow, OperadorId = dto.OperadorId};
+
         await _uow.HistorialEstadoLotes.Create(historial);
         await _uow.CompleteAsync();
 
@@ -72,6 +76,8 @@ public class LoteService : ILoteService{
         await _uow.CompleteAsync();
         return true;
     }
+
+    public async Task<bool> CambiarEstadoAsync(int id, string nuevoEstado, int operadorId){return await CambiarEstadoAsync(id, nuevoEstado, operadorId, null);}
 
     public async Task<bool> DeleteAsync(int id){
         var result = await _uow.Lotes.Delete(id);

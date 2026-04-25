@@ -10,4 +10,5 @@ public interface IFacturaService{
     Task<FacturaResponseDto> CreateAsync(FacturaCreateDto dto);
     Task<FacturaResponseDto?> UpdateEstadoAsync(int id, FacturaUpdateDto dto);
     Task<bool> DeleteAsync(int id);
+    Task<FacturaResponseDto> CreateAsync(FacturaCreateDto dto, bool aplicarItbis);
 }

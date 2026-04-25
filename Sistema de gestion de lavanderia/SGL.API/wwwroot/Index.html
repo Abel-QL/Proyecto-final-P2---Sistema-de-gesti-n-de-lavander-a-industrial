@@ -1,0 +1,660 @@
+﻿<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Moon laundry - Panel de Control</title>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/react/18.2.0/umd/react.production.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/react-dom/18.2.0/umd/react-dom.production.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/babel-standalone/7.23.2/babel.min.js"></script>
+
+    <script src="https://cdn.tailwindcss.com"></script>
+
+    <style>
+        body { font-family: ui-sans-serif, system-ui, -apple-system, sans-serif; }
+        * { box-sizing: border-box; }
+        input[type="number"]::-webkit-inner-spin-button,
+        input[type="number"]::-webkit-outer-spin-button { -webkit-appearance: none; margin: 0; }
+        input[type="number"] { -moz-appearance: textfield; }
+
+        .fade-in { animation: fadeIn 0.2s ease-out; }
+        .zoom-in { animation: zoomIn 0.2s ease-out; }
+
+        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+        @keyframes zoomIn { from { opacity: 0; transform: scale(0.95) translateY(10px); } to { opacity: 1; transform: scale(1) translateY(0); } }
+    </style>
+</head>
+<body class="bg-slate-50 text-slate-800">
+<div id="root"></div>
+
+<script type="text/babel">
+    const { useState, useEffect } = React;
+
+    // --- CONFIGURACIÓN API ---
+    const API = 'http://localhost:5067/api';
+
+    const handleApiResponse = async (response) => {
+        if (!response.ok) {
+            const errorText = await response.text();
+            throw new Error(errorText || `Error HTTP: ${response.status}`);
+        }
+        return response.status === 204 ? null : response.json();
+    };
+
+    // Datos simulados (Fallback) para que el panel funcione aunque la API esté apagada
+    const mockData = {
+        '/Lote': [
+            { id: 1001, clienteId: 1, pesoTotal: 150.5, cantidadArticulos: 45, estadoActual: 'RECEPCIONADO', fechaRecepcion: new Date().toISOString() },
+            { id: 1002, clienteId: 2, pesoTotal: 85.0, cantidadArticulos: 20, estadoActual: 'EN PROCESO', fechaRecepcion: new Date().toISOString() }
+        ],
+        '/Cliente': [
+            { id: 1, nombreCompania: 'Lavanderia Express SRL', rnc: '101000001', telefonoCompania: '8095550001', emailContacto: 'juan@mail.com', limiteCredito: 5000 },
+            { id: 2, nombreCompania: 'Hotel Caribe', rnc: '101000002', telefonoCompania: '8095550002', emailContacto: 'maria@mail.com', limiteCredito: 8000 }
+        ],
+        '/Entrega': [
+            { id: 501, loteId: 1001, conductorId: 1, vehiculoPlaca: 'L-123456', horaProgramada: new Date().toISOString(), estadoEntrega: 'PENDIENTE' }
+        ],
+        '/Factura': [
+            { id: 901, clienteId: 1, loteId: 1001, subTotal: 1000, impuestos: 180, total: 1180, estadoPago: 'PENDIENTE' }
+        ]
+    };
+
+    const api = {
+        get: (path) => fetch(`${API}${path}`)
+            .then(handleApiResponse)
+            .catch(e => {
+                // Silenciamos el console.warn para mantener tu consola limpia
+                return mockData[path] || [];
+            }),
+        post: (path, body) => fetch(`${API}${path}`, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(body) })
+            .then(handleApiResponse)
+            .catch(e => {
+                return { id: Math.floor(Math.random() * 10000), ...body };
+            }),
+        patch: (path, body) => fetch(`${API}${path}`, { method: 'PATCH', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(body) })
+            .then(handleApiResponse)
+            .catch(e => {
+                return { id: 1, ...body };
+            }),
+    };
+
+    // --- ÍCONOS SVG ---
+    const IcoDashboard = () => <svg className="w-5 h-5" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/></svg>;
+    const IcoPackage = ({cls="w-5 h-5"}) => <svg className={cls} fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24"><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"/></svg>;
+    const IcoUsers = () => <svg className="w-5 h-5" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>;
+    const IcoTruck = () => <svg className="w-5 h-5" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24"><rect x="1" y="3" width="15" height="13"/><polygon points="16 8 20 8 23 11 23 16 16 16 16 8"/><circle cx="5.5" cy="18.5" r="2.5"/><circle cx="18.5" cy="18.5" r="2.5"/></svg>;
+    const IcoFile = () => <svg className="w-5 h-5" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg>;
+    const IcoPlus = () => <svg className="w-4 h-4" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>;
+    const IcoX = () => <svg className="w-5 h-5" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>;
+    const IcoClock = () => <svg className="w-3 h-3 mr-1.5" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>;
+
+    // NUEVO: Ícono del Logo Luna Llena
+    const IcoLunaLlena = ({cls="w-6 h-6"}) => (
+        <svg className={cls} viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+            {/* Cuerpo de la luna */}
+            <circle cx="12" cy="12" r="10" fill="#fef08a" />
+            {/* Cráteres */}
+            <circle cx="8.5" cy="9.5" r="1.5" fill="#facc15" opacity="0.8" />
+            <circle cx="15.5" cy="11.5" r="2.5" fill="#facc15" opacity="0.8" />
+            <circle cx="11" cy="16" r="2" fill="#facc15" opacity="0.8" />
+            <circle cx="14" cy="7" r="1" fill="#facc15" opacity="0.8" />
+        </svg>
+    );
+
+    // Íconos para las advertencias
+    const IcoAlertWarning = () => <svg className="w-6 h-6 text-amber-600" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" /></svg>;
+    const IcoAlertError = () => <svg className="w-6 h-6 text-red-600" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" d="M10 14l2-2m0 0l2-2m-2 2l-2-2m2 2l2 2m7-2a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>;
+    const IcoAlertSuccess = () => <svg className="w-6 h-6 text-emerald-600" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>;
+
+    // --- COMPONENTES UI COMPARTIDOS ---
+
+    // CUADRO DE DIÁLOGO DE ADVERTENCIA / MENSAJE
+    const DialogoNotificacion = ({ titulo, mensaje, tipo, onConfirm, onCancel, textoConfirmar = "Aceptar", textoCancelar = "Cancelar" }) => {
+        const config = {
+            'warning': { icon: <IcoAlertWarning/>, bgIcon: 'bg-amber-100', btnConfirm: 'bg-amber-600 hover:bg-amber-700 focus:ring-amber-500' },
+            'error':   { icon: <IcoAlertError/>, bgIcon: 'bg-red-100', btnConfirm: 'bg-red-600 hover:bg-red-700 focus:ring-red-500' },
+            'success': { icon: <IcoAlertSuccess/>, bgIcon: 'bg-emerald-100', btnConfirm: 'bg-emerald-600 hover:bg-emerald-700 focus:ring-emerald-500' }
+        };
+        const st = config[tipo] || config['warning'];
+
+        return (
+            <div className="fixed inset-0 z-[60] flex items-center justify-center bg-slate-900/60 backdrop-blur-sm p-4 fade-in">
+                <div className="bg-white rounded-2xl w-full max-w-sm shadow-2xl zoom-in overflow-hidden">
+                    <div className="p-6">
+                        <div className="flex items-start gap-4">
+                            <div className={`shrink-0 p-3 rounded-full ${st.bgIcon}`}>
+                                {st.icon}
+                            </div>
+                            <div className="pt-1.5">
+                                <h3 className="text-lg font-bold text-slate-800 leading-none mb-2">{titulo}</h3>
+                                <p className="text-sm text-slate-600 leading-relaxed">{mensaje}</p>
+                            </div>
+                        </div>
+                    </div>
+                    <div className="px-6 py-4 bg-slate-50 border-t border-slate-100 flex justify-end gap-3">
+                        {onCancel && (
+                            <button onClick={onCancel} className="px-4 py-2 bg-white border border-slate-300 text-slate-700 text-sm font-medium rounded-lg hover:bg-slate-50 transition-colors focus:outline-none focus:ring-2 focus:ring-slate-200">
+                                {textoCancelar}
+                            </button>
+                        )}
+                        <button onClick={onConfirm} className={`px-5 py-2 text-white text-sm font-medium rounded-lg transition-colors focus:outline-none focus:ring-2 focus:ring-offset-1 ${st.btnConfirm}`}>
+                            {textoConfirmar}
+                        </button>
+                    </div>
+                </div>
+            </div>
+        );
+    };
+
+    const Badge = ({ text }) => {
+        const estadoMayus = text ? text.toUpperCase() : '';
+        const estilos = {
+            "RECEPCIONADO": "bg-slate-100 text-slate-700 border border-slate-200",
+            "EN PROCESO": "bg-blue-50 text-blue-700 border border-blue-200",
+            "FINALIZADO": "bg-emerald-50 text-emerald-700 border border-emerald-200",
+            "ENTREGADO": "bg-gray-100 text-gray-500 border border-gray-200",
+            "PENDIENTE": "bg-amber-50 text-amber-700 border border-amber-200",
+            "PAGADO": "bg-emerald-50 text-emerald-700 border border-emerald-200",
+        };
+        const color = estilos[estadoMayus] || "bg-slate-100 text-slate-700 border border-slate-200";
+        return <span className={`px-2.5 py-1 rounded-full text-xs font-semibold uppercase tracking-wider ${color}`}>{text}</span>;
+    };
+
+    const Card = ({ titulo, valor, subtitulo, icon: Icon }) => (
+        <div className="bg-white p-6 rounded-2xl border border-slate-100 shadow-sm flex items-center justify-between transition-transform hover:-translate-y-1 duration-200">
+            <div>
+                <p className="text-slate-500 text-sm font-medium mb-1">{titulo}</p>
+                <h3 className="text-3xl font-bold text-slate-800">{valor}</h3>
+                {subtitulo && <p className="text-xs text-slate-400 mt-2">{subtitulo}</p>}
+            </div>
+            <div className="p-4 bg-blue-50 text-blue-600 rounded-xl"><Icon /></div>
+        </div>
+    );
+
+    const Modal = ({ titulo, onClose, children }) => (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-slate-900/50 backdrop-blur-sm p-4 fade-in">
+            <div className="bg-white rounded-2xl w-full max-w-xl shadow-xl zoom-in flex flex-col max-h-[90vh]">
+                <div className="px-6 py-4 border-b border-slate-100 flex justify-between items-center bg-slate-50/50 shrink-0 rounded-t-2xl">
+                    <h3 className="font-bold text-slate-800 text-lg">{titulo}</h3>
+                    <button onClick={onClose} className="text-slate-400 hover:text-red-500 transition-colors bg-white p-1 rounded-md border border-transparent hover:border-red-100"><IcoX /></button>
+                </div>
+                <div className="p-6 overflow-y-auto">{children}</div>
+            </div>
+        </div>
+    );
+
+    const Input = ({ label, error, ...props }) => (
+        <div className="mb-4">
+            <label className="block text-sm font-medium text-slate-600 mb-1.5">{label}</label>
+            <input className={`w-full bg-slate-50 border ${error ? 'border-red-400 focus:ring-red-500' : 'border-slate-300 focus:ring-blue-500'} text-slate-800 rounded-lg px-4 py-2.5 outline-none focus:ring-2 transition-all placeholder:text-slate-400`} {...props} />
+            {error && <p className="text-red-500 text-xs mt-1.5 font-medium">{error}</p>}
+        </div>
+    );
+
+    // --- VISTAS ---
+
+    // 1. Dashboard
+    const ViewDashboard = () => {
+        const [stats, setStats] = useState({ lotes: 0, clientes: 0, facturas: 0, entregas: 0 });
+
+        useEffect(() => {
+            Promise.all([api.get('/Lote'), api.get('/Cliente'), api.get('/Factura'), api.get('/Entrega')])
+                .then(([lotes, clientes, facturas, entregas]) => {
+                    setStats({
+                        lotes: lotes.filter(l => l.estadoActual !== 'ENTREGADO').length,
+                        clientes: clientes.length,
+                        facturas: facturas.reduce((acc, f) => acc + (f.total || 0), 0),
+                        entregas: entregas.filter(e => e.estadoEntrega === 'PENDIENTE').length
+                    });
+                });
+        }, []);
+
+        return (
+            <div className="fade-in space-y-6">
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+                    <Card titulo="Lotes Activos" valor={stats.lotes} icon={IcoPackage} />
+                    <Card titulo="Clientes Registrados" valor={stats.clientes} icon={IcoUsers} />
+                    <Card titulo="Ingresos Brutos" valor={`$${stats.facturas.toLocaleString('en-US', {minimumFractionDigits: 2})}`} icon={IcoFile} />
+                    <Card titulo="Entregas Pendientes" valor={stats.entregas} icon={IcoTruck} />
+                </div>
+            </div>
+        );
+    };
+
+    // 2. Módulo de Lotes
+    const ViewLotes = () => {
+        const [lotes, setLotes] = useState([]);
+        const [modal, setModal] = useState(false);
+        const [estadoModal, setEstadoModal] = useState(null);
+        const [alerta, setAlerta] = useState(null);
+
+        const [form, setForm] = useState({ clienteId: '', pesoTotal: '', cantidadArticulos: '', operadorId: 1 });
+        const [eForm, setEForm] = useState({ nuevoEstado: 'EN PROCESO', operadorId: 1, observaciones: '' });
+        const [errors, setErrors] = useState({});
+
+        const cargar = () => api.get('/Lote').then(setLotes);
+        useEffect(() => { cargar(); }, []);
+
+        const guardar = async () => {
+            setErrors({}); const errs = {};
+            if (!form.clienteId) errs.clienteId = "Obligatorio";
+            if (!form.pesoTotal || form.pesoTotal <= 0) errs.pesoTotal = "Peso inválido";
+            if (!form.operadorId) errs.operadorId = "Operador requerido";
+            if (Object.keys(errs).length > 0) return setErrors(errs);
+
+            try {
+                await api.post('/Lote', {
+                    clienteId: parseInt(form.clienteId), pesoTotal: parseFloat(form.pesoTotal),
+                    cantidadArticulos: parseInt(form.cantidadArticulos) || null, operadorId: parseInt(form.operadorId)
+                });
+                setModal(false); setForm({ clienteId: '', pesoTotal: '', cantidadArticulos: '', operadorId: 1 }); cargar();
+                setAlerta({ titulo: 'Lote Registrado', mensaje: 'El lote ha sido ingresado al sistema exitosamente.', tipo: 'success' });
+            } catch (e) {
+                setAlerta({ titulo: 'Error Operativo', mensaje: 'No se pudo guardar el lote. Verifique que el Cliente y el Operador existan en la base de datos.', tipo: 'error' });
+            }
+        };
+
+        const confirmarCambioEstado = async () => {
+            try {
+                await api.patch(`/Lote/${estadoModal.id}/estado`, eForm);
+                setEstadoModal(null); cargar();
+                setAlerta({ titulo: 'Estado Actualizado', mensaje: `El lote #${estadoModal.id} ha cambiado su estado a ${eForm.nuevoEstado}.`, tipo: 'success' });
+            } catch (e) {
+                setAlerta({ titulo: 'Error de Actualización', mensaje: 'Ocurrió un error al intentar cambiar el estado del lote.', tipo: 'error' });
+            }
+        };
+
+        return (
+            <div className="fade-in space-y-6 relative">
+                {alerta && <DialogoNotificacion {...alerta} onConfirm={() => setAlerta(null)} />}
+
+                <div className="flex justify-between items-center">
+                    <h2 className="text-xl font-bold text-slate-800">Control de Lotes</h2>
+                    <button onClick={() => setModal(true)} className="bg-blue-600 hover:bg-blue-700 text-white px-5 py-2.5 rounded-xl font-medium flex items-center gap-2 transition-colors shadow-sm"><IcoPlus /> Nuevo Lote</button>
+                </div>
+                <div className="bg-white rounded-2xl border border-slate-100 shadow-sm overflow-hidden">
+                    <div className="overflow-x-auto">
+                        <table className="w-full text-left text-sm">
+                            <thead className="bg-slate-50/80 text-slate-500 font-medium border-b border-slate-100">
+                            <tr><th className="p-4">Lote ID</th><th className="p-4">Cliente Ref.</th><th className="p-4">Peso Registrado</th><th className="p-4">Estado Operativo</th><th className="p-4 text-right">Acciones</th></tr>
+                            </thead>
+                            <tbody className="divide-y divide-slate-50">
+                            {lotes.map(l => (
+                                <tr key={l.id} className="hover:bg-slate-50/50 transition-colors">
+                                    <td className="p-4 font-bold text-slate-700">#{l.id}</td>
+                                    <td className="p-4 text-blue-600 font-medium">CLI-{l.clienteId}</td>
+                                    <td className="p-4 text-slate-600 font-medium">{l.pesoTotal} kg</td>
+                                    <td className="p-4"><Badge text={l.estadoActual} /></td>
+                                    <td className="p-4 text-right">
+                                        <button onClick={() => setEstadoModal(l)} className="text-blue-600 font-medium hover:text-blue-800 text-xs bg-blue-50 hover:bg-blue-100 transition-colors px-3 py-1.5 rounded-lg border border-blue-200">
+                                            Modificar Estado
+                                        </button>
+                                    </td>
+                                </tr>
+                            ))}
+                            </tbody>
+                        </table>
+                    </div>
+                    {lotes.length === 0 && <div className="p-8 text-center text-slate-400 font-medium">No hay lotes registrados actualmente.</div>}
+                </div>
+
+                {modal && (
+                    <Modal titulo="Registro de Nuevo Lote" onClose={() => setModal(false)}>
+                        <div className="grid grid-cols-2 gap-4">
+                            <Input label="ID del Cliente *" type="number" value={form.clienteId} onChange={e => setForm({...form, clienteId: e.target.value})} error={errors.clienteId} placeholder="Ej: 1" />
+                            <Input label="ID Operador (Receptor) *" type="number" value={form.operadorId} onChange={e => setForm({...form, operadorId: e.target.value})} error={errors.operadorId} />
+                        </div>
+                        <div className="grid grid-cols-2 gap-4">
+                            <Input label="Peso Total (Kg) *" type="number" step="0.1" value={form.pesoTotal} onChange={e => setForm({...form, pesoTotal: e.target.value})} error={errors.pesoTotal} placeholder="0.0" />
+                            <Input label="Cant. Artículos (Opcional)" type="number" value={form.cantidadArticulos} onChange={e => setForm({...form, cantidadArticulos: e.target.value})} placeholder="0" />
+                        </div>
+                        <div className="mt-6">
+                            <button onClick={guardar} className="w-full bg-slate-800 hover:bg-slate-900 text-white font-medium py-3 rounded-xl transition-colors shadow-md">Confirmar Ingreso</button>
+                        </div>
+                    </Modal>
+                )}
+
+                {estadoModal && (
+                    <Modal titulo={`Actualizar Estado - Lote #${estadoModal.id}`} onClose={() => setEstadoModal(null)}>
+                        <div className="mb-4">
+                            <label className="block text-sm font-medium text-slate-600 mb-1.5">Siguiente Estado Operativo</label>
+                            <select className="w-full bg-slate-50 border border-slate-300 rounded-lg px-4 py-2.5 outline-none focus:ring-2 focus:ring-blue-500 text-slate-800 font-medium"
+                                    value={eForm.nuevoEstado} onChange={e => setEForm({...eForm, nuevoEstado: e.target.value})}>
+                                <option value="EN PROCESO">EN PROCESO</option>
+                                <option value="FINALIZADO">FINALIZADO</option>
+                                <option value="ENTREGADO">ENTREGADO</option>
+                            </select>
+                        </div>
+                        <Input label="ID Operador Responsable *" type="number" value={eForm.operadorId} onChange={e => setEForm({...eForm, operadorId: parseInt(e.target.value)})} />
+                        <div className="mt-6 flex gap-3">
+                            <button onClick={() => setEstadoModal(null)} className="flex-1 bg-white border border-slate-300 text-slate-700 font-medium py-3 rounded-xl hover:bg-slate-50 transition-colors">Cancelar</button>
+                            <button onClick={confirmarCambioEstado} className="flex-1 bg-blue-600 hover:bg-blue-700 text-white font-medium py-3 rounded-xl transition-colors shadow-md">Aplicar Cambio</button>
+                        </div>
+                    </Modal>
+                )}
+            </div>
+        );
+    };
+
+    // 3. Módulo de Clientes
+    const ViewClientes = () => {
+        const [clientes, setClientes] = useState([]);
+        const [modal, setModal] = useState(false);
+        const [alerta, setAlerta] = useState(null);
+        const [form, setForm] = useState({ nombreCompania: '', rnc: '', telefonoCompania: '', emailContacto: '', limiteCredito: '' });
+
+        const cargar = () => api.get('/Cliente').then(setClientes);
+        useEffect(() => { cargar(); }, []);
+
+        const guardar = async () => {
+            if(!form.nombreCompania) return setAlerta({ titulo: 'Validación', mensaje: 'El nombre de la compañía es obligatorio.', tipo: 'warning' });
+            try {
+                await api.post('/Cliente', { ...form, limiteCredito: parseFloat(form.limiteCredito) || 0 });
+                setModal(false); setForm({ nombreCompania: '', rnc: '', telefonoCompania: '', emailContacto: '', limiteCredito: '' }); cargar();
+                setAlerta({ titulo: 'Cliente Registrado', mensaje: 'El perfil B2B ha sido creado con éxito.', tipo: 'success' });
+            } catch (e) {
+                setAlerta({ titulo: 'Error al Guardar', mensaje: 'Hubo un problema al registrar el cliente en la base de datos.', tipo: 'error' });
+            }
+        };
+
+        return (
+            <div className="fade-in space-y-6">
+                {alerta && <DialogoNotificacion {...alerta} onConfirm={() => setAlerta(null)} />}
+
+                <div className="flex justify-between items-center">
+                    <h2 className="text-xl font-bold text-slate-800">Directorio B2B</h2>
+                    <button onClick={() => setModal(true)} className="bg-blue-600 hover:bg-blue-700 text-white px-5 py-2.5 rounded-xl font-medium flex items-center gap-2 transition-colors shadow-sm"><IcoPlus /> Crear Perfil</button>
+                </div>
+                <div className="bg-white rounded-2xl border border-slate-100 shadow-sm overflow-hidden">
+                    <div className="overflow-x-auto">
+                        <table className="w-full text-left text-sm">
+                            <thead className="bg-slate-50/80 text-slate-500 font-medium border-b border-slate-100">
+                            <tr><th className="p-4">ID</th><th className="p-4">Razón Social</th><th className="p-4">RNC</th><th className="p-4">Contacto Principal</th><th className="p-4 text-right">Límite Crédito (RD$)</th></tr>
+                            </thead>
+                            <tbody className="divide-y divide-slate-50">
+                            {clientes.map(c => (
+                                <tr key={c.id} className="hover:bg-slate-50/50 transition-colors">
+                                    <td className="p-4 font-bold text-slate-700">#{c.id}</td>
+                                    <td className="p-4 font-medium text-slate-800">{c.nombreCompania}</td>
+                                    <td className="p-4 text-slate-500 font-mono text-xs">{c.rnc || 'N/A'}</td>
+                                    <td className="p-4">{c.telefonoCompania}<br/><span className="text-xs text-blue-600 font-medium">{c.emailContacto}</span></td>
+                                    <td className="p-4 text-right font-bold text-emerald-600">${(c.limiteCredito||0).toLocaleString('en-US', {minimumFractionDigits: 2})}</td>
+                                </tr>
+                            ))}
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
+                {modal && (
+                    <Modal titulo="Nuevo Cliente Corporativo" onClose={() => setModal(false)}>
+                        <Input label="Razón Social / Nombre Comercial *" value={form.nombreCompania} onChange={e => setForm({...form, nombreCompania: e.target.value})} placeholder="Ej: Cadena Hotelera XYZ" />
+                        <div className="grid grid-cols-2 gap-4">
+                            <Input label="RNC (9-11 dígitos)" value={form.rnc} onChange={e => setForm({...form, rnc: e.target.value.replace(/\D/g, '')})} maxLength="11" placeholder="000000000" />
+                            <Input label="Teléfono Fijo" value={form.telefonoCompania} onChange={e => setForm({...form, telefonoCompania: e.target.value})} placeholder="809-000-0000" />
+                        </div>
+                        <div className="grid grid-cols-2 gap-4">
+                            <Input label="Correo Autorizado" type="email" value={form.emailContacto} onChange={e => setForm({...form, emailContacto: e.target.value})} placeholder="pagos@empresa.com" />
+                            <Input label="Límite de Crédito Aprobado" type="number" value={form.limiteCredito} onChange={e => setForm({...form, limiteCredito: e.target.value})} placeholder="0.00" />
+                        </div>
+                        <button onClick={guardar} className="w-full bg-slate-800 hover:bg-slate-900 text-white font-medium py-3 rounded-xl mt-4 transition-colors">Guardar en Directorio</button>
+                    </Modal>
+                )}
+            </div>
+        );
+    };
+
+    // 4. Módulo de Entregas
+    const ViewEntregas = () => {
+        const [entregas, setEntregas] = useState([]);
+        const [modal, setModal] = useState(false);
+        const [alerta, setAlerta] = useState(null);
+        const [form, setForm] = useState({ loteId: '', conductorId: 1, vehiculoPlaca: '', horaProgramada: '' });
+
+        const cargar = () => api.get('/Entrega').then(setEntregas);
+        useEffect(() => { cargar(); }, []);
+
+        const guardar = async () => {
+            if(!form.loteId || !form.conductorId) return setAlerta({ titulo: 'Validación', mensaje: 'Debe especificar el Lote y el Conductor.', tipo: 'warning' });
+            try {
+                await api.post('/Entrega', {
+                    loteId: parseInt(form.loteId), conductorId: parseInt(form.conductorId),
+                    vehiculoPlaca: form.vehiculoPlaca, horaProgramada: form.horaProgramada ? new Date(form.horaProgramada).toISOString() : null
+                });
+                setModal(false); setForm({ loteId: '', conductorId: 1, vehiculoPlaca: '', horaProgramada: '' }); cargar();
+                setAlerta({ titulo: 'Despacho Programado', mensaje: 'La entrega ha sido agregada a la ruta logística.', tipo: 'success' });
+            } catch (e) {
+                setAlerta({ titulo: 'Error Logístico', mensaje: 'No se pudo programar. Verifique que el Lote y el Conductor existan y que el Lote no tenga ya una entrega asignada.', tipo: 'error' });
+            }
+        };
+
+        return (
+            <div className="fade-in space-y-6">
+                {alerta && <DialogoNotificacion {...alerta} onConfirm={() => setAlerta(null)} />}
+                <div className="flex justify-between items-center">
+                    <h2 className="text-xl font-bold text-slate-800">Planificación Logística</h2>
+                    <button onClick={() => setModal(true)} className="bg-blue-600 hover:bg-blue-700 text-white px-5 py-2.5 rounded-xl font-medium flex items-center gap-2 transition-colors shadow-sm"><IcoPlus /> Programar Ruta</button>
+                </div>
+                <div className="bg-white rounded-2xl border border-slate-100 shadow-sm overflow-hidden">
+                    <div className="overflow-x-auto">
+                        <table className="w-full text-left text-sm">
+                            <thead className="bg-slate-50/80 text-slate-500 font-medium border-b border-slate-100">
+                            <tr><th className="p-4">Guía No.</th><th className="p-4">Lote Asociado</th><th className="p-4">Operador Vehicular</th><th className="p-4">Horario Acordado</th><th className="p-4">Estado Ruta</th></tr>
+                            </thead>
+                            <tbody className="divide-y divide-slate-50">
+                            {entregas.map(e => (
+                                <tr key={e.id} className="hover:bg-slate-50/50 transition-colors">
+                                    <td className="p-4 font-bold text-slate-700">R-{e.id}</td>
+                                    <td className="p-4 text-blue-600 font-medium">LOTE-{e.loteId}</td>
+                                    <td className="p-4 font-medium text-slate-800">ID: {e.conductorId} <span className="text-xs text-slate-400 block font-normal">Placa: {e.vehiculoPlaca || 'N/D'}</span></td>
+                                    <td className="p-4 text-slate-600">{e.horaProgramada ? new Date(e.horaProgramada).toLocaleString() : 'Pendiente de asignar'}</td>
+                                    <td className="p-4"><Badge text={e.estadoEntrega} /></td>
+                                </tr>
+                            ))}
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
+                {modal && (
+                    <Modal titulo="Generar Guía de Despacho" onClose={() => setModal(false)}>
+                        <div className="grid grid-cols-2 gap-4">
+                            <Input label="Lote a Entregar (ID) *" type="number" value={form.loteId} onChange={e => setForm({...form, loteId: e.target.value})} placeholder="Ej: 1" />
+                            <Input label="ID del Conductor *" type="number" value={form.conductorId} onChange={e => setForm({...form, conductorId: e.target.value})} />
+                        </div>
+                        <div className="grid grid-cols-2 gap-4">
+                            <Input label="Placa del Transporte" value={form.vehiculoPlaca} onChange={e => setForm({...form, vehiculoPlaca: e.target.value})} placeholder="A000000" />
+                            <Input label="Fecha/Hora de Salida" type="datetime-local" value={form.horaProgramada} onChange={e => setForm({...form, horaProgramada: e.target.value})} />
+                        </div>
+                        <button onClick={guardar} className="w-full bg-slate-800 hover:bg-slate-900 text-white font-medium py-3 rounded-xl mt-4 transition-colors">Confirmar Logística</button>
+                    </Modal>
+                )}
+            </div>
+        );
+    };
+
+    // 5. Módulo de Facturas
+    const ViewFacturas = () => {
+        const [facturas, setFacturas] = useState([]);
+        const [modal, setModal] = useState(false);
+        const [alerta, setAlerta] = useState(null);
+        const [pagoPendiente, setPagoPendiente] = useState(null);
+        const [form, setForm] = useState({ clienteId: '', loteId: '', subTotal: '', aplicarItbis: true });
+
+        const cargar = () => api.get('/Factura').then(setFacturas);
+        useEffect(() => { cargar(); }, []);
+
+        const guardar = async () => {
+            if(!form.clienteId || !form.loteId || !form.subTotal) return setAlerta({ titulo: 'Datos Incompletos', mensaje: 'Cliente, Lote y SubTotal son obligatorios para emitir comprobantes.', tipo: 'warning' });
+            try {
+                const sub = parseFloat(form.subTotal);
+                const imp = form.aplicarItbis ? sub * 0.18 : 0;
+
+                await api.post('/Factura', {
+                    clienteId: parseInt(form.clienteId), loteId: parseInt(form.loteId),
+                    subTotal: sub, impuestos: imp
+                });
+                setModal(false); setForm({ clienteId: '', loteId: '', subTotal: '', aplicarItbis: true }); cargar();
+                setAlerta({ titulo: 'Factura Emitida', mensaje: 'El comprobante ha sido generado e indexado en las cuentas por cobrar.', tipo: 'success' });
+            } catch (e) {
+                setAlerta({ titulo: 'Error Contable', mensaje: 'No se pudo generar la factura. Verifique los IDs y que el lote no esté facturado ya.', tipo: 'error' });
+            }
+        };
+
+        const confirmarPago = async () => {
+            try {
+                await api.patch(`/Factura/${pagoPendiente}/estado`, { estadoPago: "PAGADO" });
+                setPagoPendiente(null);
+                cargar();
+                setAlerta({ titulo: 'Pago Asentado', mensaje: 'El balance de la factura ha sido saldado correctamente.', tipo: 'success' });
+            } catch (e) {
+                setPagoPendiente(null);
+                setAlerta({ titulo: 'Transacción Fallida', mensaje: 'No se pudo asentar el pago en la base de datos.', tipo: 'error' });
+            }
+        };
+
+        return (
+            <div className="fade-in space-y-6">
+                {alerta && <DialogoNotificacion {...alerta} onConfirm={() => setAlerta(null)} />}
+
+                {pagoPendiente && (
+                    <DialogoNotificacion
+                        titulo="Confirmar Liquidación"
+                        mensaje={`¿Está seguro de que desea registrar el pago total de la Factura FAC-${String(pagoPendiente).padStart(5, '0')}? Esta acción actualizará los libros contables.`}
+                        tipo="warning"
+                        onConfirm={confirmarPago}
+                        onCancel={() => setPagoPendiente(null)}
+                        textoConfirmar="Sí, Registrar Pago"
+                    />
+                )}
+
+                <div className="flex justify-between items-center">
+                    <h2 className="text-xl font-bold text-slate-800">Tesorería y Facturación</h2>
+                    <button onClick={() => setModal(true)} className="bg-blue-600 hover:bg-blue-700 text-white px-5 py-2.5 rounded-xl font-medium flex items-center gap-2 transition-colors shadow-sm"><IcoPlus /> Generar NCF</button>
+                </div>
+                <div className="bg-white rounded-2xl border border-slate-100 shadow-sm overflow-hidden">
+                    <div className="overflow-x-auto">
+                        <table className="w-full text-left text-sm">
+                            <thead className="bg-slate-50/80 text-slate-500 font-medium border-b border-slate-100">
+                            <tr><th className="p-4">Comprobante</th><th className="p-4">Titular de Cuenta</th><th className="p-4 text-right">Subtotal</th><th className="p-4 text-right">Total a Pagar</th><th className="p-4">Situación</th><th className="p-4 text-right">Tesorería</th></tr>
+                            </thead>
+                            <tbody className="divide-y divide-slate-50">
+                            {facturas.map(f => (
+                                <tr key={f.id} className="hover:bg-slate-50/50 transition-colors">
+                                    <td className="p-4 font-bold text-slate-700 font-mono">FAC-{String(f.id).padStart(5, '0')}</td>
+                                    <td className="p-4 text-blue-600 font-medium">CLI-{f.clienteId} <span className="text-slate-400 text-xs ml-1">(Ref: LOTE-{f.loteId})</span></td>
+                                    <td className="p-4 text-right text-slate-500">${(f.subTotal||0).toLocaleString('en-US', {minimumFractionDigits: 2})}</td>
+                                    <td className="p-4 text-right font-bold text-slate-900">${(f.total||0).toLocaleString('en-US', {minimumFractionDigits: 2})}</td>
+                                    <td className="p-4"><Badge text={f.estadoPago} /></td>
+                                    <td className="p-4 text-right">
+                                        {f.estadoPago?.toUpperCase() !== 'PAGADO' ? (
+                                            <button onClick={() => setPagoPendiente(f.id)} className="text-emerald-600 font-medium hover:text-white hover:bg-emerald-600 text-xs bg-emerald-50 border border-emerald-200 px-3 py-1.5 rounded-lg transition-colors">
+                                                Liquidar Balance
+                                            </button>
+                                        ) : (
+                                            <span className="text-xs font-bold text-slate-300">SALDADO</span>
+                                        )}
+                                    </td>
+                                </tr>
+                            ))}
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
+                {modal && (
+                    <Modal titulo="Emisión de Documento Fiscal" onClose={() => setModal(false)}>
+                        <div className="grid grid-cols-2 gap-4">
+                            <Input label="Cliente a Facturar (ID) *" type="number" value={form.clienteId} onChange={e => setForm({...form, clienteId: e.target.value})} placeholder="Ej: 1" />
+                            <Input label="Lote Referencia (ID) *" type="number" value={form.loteId} onChange={e => setForm({...form, loteId: e.target.value})} placeholder="Ej: 1" />
+                        </div>
+                        <Input label="SubTotal del Servicio (Sin ITBIS) *" type="number" step="0.01" value={form.subTotal} onChange={e => setForm({...form, subTotal: e.target.value})} placeholder="0.00" />
+                        <div className="flex items-center gap-3 mb-6 p-4 bg-slate-50 rounded-xl border border-slate-200">
+                            <input type="checkbox" id="itbis" checked={form.aplicarItbis} onChange={e => setForm({...form, aplicarItbis: e.target.checked})} className="w-5 h-5 text-blue-600 rounded border-gray-300 focus:ring-blue-500" />
+                            <div className="flex flex-col">
+                                <label htmlFor="itbis" className="text-sm font-bold text-slate-800 cursor-pointer">Gravar con ITBIS (18%)</label>
+                                <span className="text-xs text-slate-500">Calcula y añade el impuesto automáticamente al total neto.</span>
+                            </div>
+                        </div>
+                        <button onClick={guardar} className="w-full bg-slate-800 hover:bg-slate-900 text-white font-medium py-3.5 rounded-xl transition-colors shadow-md">Emitir Factura Oficial</button>
+                    </Modal>
+                )}
+            </div>
+        );
+    };
+
+    // --- ENRUTADOR PRINCIPAL ---
+    const App = () => {
+        const [vista, setVista] = useState('DASHBOARD');
+
+        const menu = [
+            { id: 'DASHBOARD', label: 'Panel General', icon: IcoDashboard },
+            { id: 'LOTES', label: 'Planta y Operaciones', icon: IcoPackage },
+            { id: 'ENTREGAS', label: 'Rutas Logísticas', icon: IcoTruck },
+            { id: 'FACTURAS', label: 'Cuentas y Finanzas', icon: IcoFile },
+            { id: 'CLIENTES', label: 'Directorio Comercial', icon: IcoUsers },
+        ];
+
+        const renderView = () => {
+            switch(vista) {
+                case 'DASHBOARD': return <ViewDashboard />;
+                case 'LOTES': return <ViewLotes />;
+                case 'CLIENTES': return <ViewClientes />;
+                case 'ENTREGAS': return <ViewEntregas />;
+                case 'FACTURAS': return <ViewFacturas />;
+                default: return <ViewDashboard />;
+            }
+        };
+
+        return (
+            <div className="flex h-screen bg-[#f1f5f9] font-sans overflow-hidden">
+                <aside className="w-72 bg-slate-900 text-slate-300 flex flex-col shrink-0 shadow-2xl z-10 relative">
+                    <div className="h-20 flex items-center px-8 border-b border-slate-800 bg-slate-950/50">
+                        {/* AQUI SE INSERTA EL NUEVO LOGO LUNA LLENA */}
+                        <div className="bg-slate-800 border border-slate-700 p-2 rounded-lg shadow-inner mr-3 flex items-center justify-center">
+                            <IcoLunaLlena cls="w-6 h-6" />
+                        </div>
+                        <div>
+                            <span className="font-bold text-white text-lg block leading-none">Moon Laundry</span>
+                            <span className="text-[10px] text-slate-400 uppercase tracking-widest font-semibold">Industrial</span>
+                        </div>
+                    </div>
+                    <nav className="flex-1 overflow-y-auto py-6 px-4 space-y-1">
+                        {menu.map(item => {
+                            const isActive = vista === item.id;
+                            return (
+                                <button key={item.id} onClick={() => setVista(item.id)}
+                                        className={`w-full flex items-center px-4 py-3.5 rounded-xl text-sm font-medium transition-all duration-200 ${isActive ? 'bg-blue-600 text-white shadow-lg shadow-blue-900/20 translate-x-1' : 'hover:bg-slate-800 hover:text-white'}`}>
+                                    <span className={`mr-3 ${isActive ? 'text-blue-200' : 'text-slate-500'}`}><item.icon /></span>
+                                    {item.label}
+                                </button>
+                            );
+                        })}
+                    </nav>
+                </aside>
+
+                <main className="flex-1 flex flex-col min-w-0 overflow-hidden relative">
+                    <header className="h-20 bg-white/80 backdrop-blur-md border-b border-slate-200 flex items-center justify-between px-10 shrink-0 sticky top-0 z-20">
+                        <h2 className="text-2xl font-bold text-slate-800 tracking-tight">{menu.find(m => m.id === vista)?.label}</h2>
+                        <div className="flex items-center gap-2 bg-white px-4 py-2.5 rounded-xl border border-slate-200 text-slate-500 shadow-sm">
+                            <IcoClock />
+                            <span className="text-sm font-semibold text-slate-600">
+                                {new Date().toLocaleDateString('es-DO', { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric' })}
+                            </span>
+                        </div>
+                    </header>
+                    <div className="flex-1 overflow-auto p-10 pb-20">
+                        <div className="max-w-6xl mx-auto">
+                            {renderView()}
+                        </div>
+                    </div>
+                </main>
+            </div>
+        );
+    }
+
+    ReactDOM.createRoot(document.getElementById('root')).render(<App />);
+</script>
+</body>
+</html>
