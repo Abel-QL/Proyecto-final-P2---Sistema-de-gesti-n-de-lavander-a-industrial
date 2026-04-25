@@ -8,7 +8,7 @@ using SGL.Aplication.Dtos.FacturaDto;
 using SGL.Aplication.Dtos.ServicioDto;
 using SGL.Aplication.Dtos.LoteDto;
 
-namespace SGL.Application.Mappings;
+namespace SGL.Aplication.MappingProfiles;
 
 public class MappingProfile : Profile{
     public MappingProfile(){
